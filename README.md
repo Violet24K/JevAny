@@ -304,21 +304,22 @@ NLL, Brier and ECE are measured on Transfer.
 [Machine-readable results](results/model-family-v2.json) ·
 [Method and ablation report](reports/JevAny_Tech_Report.pdf)
 
-Two additional public suites confirm the same model ordering without closed
-API baselines:
+Typed Decisions provides an additional public zero-shot comparison. Its
+accuracy is agreement with soft gold labels produced by a teacher of roughly
+4B-class capability, not a measure of objective correctness:
 
-| Public suite | Coverage | Best local result |
+| Public suite | Coverage | Best local teacher agreement |
 |:---|---:|---:|
 | Typed Decisions | 2,000 / 2,000 decisions | **Qwen3.8-27B: 72.80%** |
-| JevJudge-Public v0.3 | 3,123 / 3,220 records | **Qwen3.8-27B: 61.32% answered-only** |
 
 [Full external results, probability metrics and reproducibility notes](docs/EXTERNAL_EVALUATION.md)
 
 ### ⏱️ 3.1 Inference efficiency <a name="efficiency"></a>
 
 On one H200, CUDA Graphs cut Qwen3.8-27B median latency from **113.54 to
-30.53 ms (3.72×)** on 231 JevBench questions, and Muse-Glimmer-30B from
-**100.71 to 43.25 ms (2.33×)** on a balanced 44-request Transfer panel.
+30.53 ms (3.72×)** on 231 JevBench questions; fused SDPA plus CUDA Graphs cut
+Muse-Glimmer-30B from **100.71 to 43.25 ms (2.33×)** on a balanced 44-request
+Transfer panel.
 Accuracy stayed at 207/231 and 38/44, with no argmax changes. The A100-40GB
 comparison below uses batch size 1: 4B models fit on one GPU and use CUDA
 Graphs, while 27B and 30B are layer-sharded over three GPUs and gain only from
