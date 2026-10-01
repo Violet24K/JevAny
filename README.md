@@ -316,11 +316,13 @@ API baselines:
 
 ### ⏱️ 3.1 Inference efficiency <a name="efficiency"></a>
 
-On one H200, direct CUDA Graphs cut Qwen3.8-27B median latency from
-**113.54 ms to 30.53 ms (3.72×)** with 207/231 correct answers before and
-after. The A100-40GB comparison below uses batch size 1: 4B models fit on one
-GPU and use CUDA Graphs, while 27B and 30B are layer-sharded over three GPUs
-and gain only from linear-attention kernels and fused SDPA.
+On one H200, CUDA Graphs cut Qwen3.8-27B median latency from **113.54 to
+30.53 ms (3.72×)** on 231 JevBench questions, and Muse-Glimmer-30B from
+**100.71 to 43.25 ms (2.33×)** on a balanced 44-request Transfer panel.
+Accuracy stayed at 207/231 and 38/44, with no argmax changes. The A100-40GB
+comparison below uses batch size 1: 4B models fit on one GPU and use CUDA
+Graphs, while 27B and 30B are layer-sharded over three GPUs and gain only from
+linear-attention kernels and fused SDPA.
 
 [![Accuracy vs median latency before and after acceleration for JevAny and other decision models](docs/efficiency-latency.png)](docs/EFFICIENCY.md)
 

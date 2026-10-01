@@ -10,11 +10,19 @@ numbers are also in [`results/efficiency-a100-v1.json`](../results/efficiency-a1
 
 ## Summary
 
-On one H200, direct CUDA Graphs reduced JevAny-Qwen3.8-27B JevBench median
-latency from **113.54 ms to 30.53 ms (3.72×)**. Both matched paths answered
-207/231 correctly with no argmax changes. Mean latency fell from 138.49 ms to
-81.20 ms; p95 was effectively unchanged at 279.17 versus 281.52 ms. See the
-[serving configuration](DEPLOYMENT.md#optional-cuda-acceleration).
+Whole-model CUDA Graph capture gives the largest-model speedups when the model
+fits on one H200:
+
+| Model | Fixed latency panel | Default median | Accelerated median | Speed-up | Accuracy |
+|:---|:---|---:|---:|---:|---:|
+| JevAny-Qwen3.8-27B | JevBench public, 231 | 113.54 ms | **30.53 ms** | **3.72×** | 207/231 → 207/231 |
+| JevAny-Muse-Glimmer-30B | Transfer balanced sample, 44 | 100.71 ms | **43.25 ms** | **2.33×** | 38/44 → 38/44 |
+
+Neither run had an argmax change. The 30B audit separates fused SDPA's 1.15×
+median gain from CUDA Graphs' further 2.03× gain, with 96 graph calls and no
+eager fallback. Its [machine-readable audit](../results/efficiency-h200-muse30-v1.json)
+uses 44 short requests, so compare latency only within each row, not across the
+two panels. See the [serving configuration](DEPLOYMENT.md#optional-cuda-acceleration).
 
 The table and plot below are the separate A100-40GB comparison. The 27B and
 30B models require layer sharding on 40 GB cards, which prevents whole-model
